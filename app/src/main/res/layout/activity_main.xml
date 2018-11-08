@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.github.mikephil.charting.charts.LineChart xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/idPieChart"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    tools:context= "com.example.itar.moneykeeper2.MainActivity">
+    <com.github.mikephil.charting.charts.PieChart
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/idPieChart">
+
+    </com.github.mikephil.charting.charts.PieChart>
+
+</RelativeLayout>
+

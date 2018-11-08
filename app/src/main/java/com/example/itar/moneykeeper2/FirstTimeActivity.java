@@ -16,7 +16,7 @@ public class FirstTimeActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         // Perhaps set content view here
         prefs = getSharedPreferences("com.example.itar.moneykeeper2", MODE_PRIVATE);
-        setContentView(R.layout.activity_firsttime);
+        setContentView(R.layout.activity_main);
     }
 
     @Override
@@ -34,6 +34,7 @@ public class FirstTimeActivity extends AppCompatActivity{
     public void openRegisterInfo(View v) {
         startActivity(new Intent(this, RegisterActivity.class));
     }
+
 
 }
 
