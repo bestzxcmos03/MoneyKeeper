@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         pieChart.setCenterText("Super cool Chart");
         pieChart.setCenterTextSize(10);
         pieChart.setDrawEntryLabels(true);
+        int x;
     }
 
 }
