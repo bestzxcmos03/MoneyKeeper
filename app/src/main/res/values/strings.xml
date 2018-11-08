@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MoneyKeeper2</string>
+    <string name="next"><u>Next</u></string>
+    <string name="welcome_to_moneykeeper">Welcome to MoneyKeeper!</string>
+    <string name="your_first_use_right">Your first use right?</string>
+    <string name="hello">Hello</string>
+    <string name="register">Register</string>
+    <string name="nickname">NickName</string>
+    <string name="balance">Balance</string>
+    <string name="new_pin_code">New Pin code</string>
+    <string name="enter_here">Enter Here</string>
+
+</resources>
