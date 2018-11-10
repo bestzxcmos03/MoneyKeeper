@@ -1,119 +1,104 @@
 package com.example.itar.moneykeeper2;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ListView;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static android.graphics.Color.WHITE;
+
 public class MainActivity extends AppCompatActivity {
 
-    private static String TAG = "MainActivity";
+    /*RegisterActivity reg = new RegisterActivity();
+    String name = reg.getUSERNAME();
+    String strBalance = reg.getBALANCE();
+    int intBalance = Integer.parseInt(strBalance);*/
 
-    private float[] yData = {25.3f, 10.6f, 66.76f, 44.32f, 46.01f, 16.89f, 23.9f};
-    private String[] xData = {"Mitch", "Jessica" , "Mohammad" , "Kelsey", "Sam", "Robert", "Ashley"};
-    PieChart pieChart;
+    private static String TAG = "MainActivity";
+    private float[] yData = {130,230,330,410};
+    private String[] xData = {"Income","Saving","Expense","Auto-Expense"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: starting to create chart");
+        setupPieChart();
+        setupList();
+    }
 
-        pieChart = findViewById(R.id.idPieChart);
+    public void addNewTransaction(View v){
+        Intent itn = new Intent(this, NewTransaction.class);
+        startActivity(itn);
 
-        pieChart.setRotationEnabled(true);
-        //pieChart.setUsePercentValues(true);
-        //pieChart.setHoleColor(Color.BLUE);
-        //pieChart.setCenterTextColor(Color.BLACK);
-        pieChart.setHoleRadius(25f);
-        pieChart.setTransparentCircleAlpha(0);
-        pieChart.setCenterText("Super Cool Chart");
-        pieChart.setCenterTextSize(10);
-        pieChart.setDrawEntryLabels(true);
-        pieChart.setEntryLabelTextSize(20);
-        //More options just check out the documentation!
+    }
+    public void checkTransaction(View v){
+        Intent itn = new Intent(this, CheckTransaction.class);
+        startActivity(itn);
+    }
+    public void setupList(){
+        List<Data> datas = new ArrayList<Data>();
+        datas.add(new Data("Balance","Update: Today"));
+        datas.add(new Data("Saving","Update: Today"));
+        datas.add(new Data("Income","Update: Today"));
+        datas.add(new Data("Auto-Income","Update: Today"));
+        datas.add(new Data("Expense","Update: Today"));
+        datas.add(new Data("Auto-Expense","Update: Today"));
+        MyAdapter adapter = new MyAdapter(this,datas);
+        ListView lv = findViewById(R.id.listView);
+        lv.setAdapter(adapter);
 
-        addDataSet();
-
-        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                Log.d(TAG, "onValueSelected: Value select from chart.");
-                Log.d(TAG, "onValueSelected: " + e.toString());
-                Log.d(TAG, "onValueSelected: " + h.toString());
-
-                int pos1 = e.toString().indexOf("(sum): ");
-                String sales = e.toString().substring(pos1 + 7);
-
-                for(int i = 0; i < yData.length; i++){
-                    if(yData[i] == Float.parseFloat(sales)){
-                        pos1 = i;
-                        break;
-                    }
-                }
-                String employee = xData[pos1 + 1];
-                Toast.makeText(MainActivity.this, "Employee " + employee + "\n" + "Sales: $" + sales + "K", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onNothingSelected() {
-
-            }
-        });
 
     }
 
-    private void addDataSet() {
-        Log.d(TAG, "addDataSet started");
-        ArrayList<PieEntry> yEntrys = new ArrayList<>();
-        ArrayList<String> xEntrys = new ArrayList<>();
+    public void setupPieChart(){
 
-        for(int i = 0; i < yData.length; i++){
-            yEntrys.add(new PieEntry(yData[i] , i));
+        PieChart chart = findViewById(R.id.idPieChart);
+
+        chart.setRotationEnabled(true);
+        chart.setHoleRadius(0f);
+        //chart.setCenterTextColor(Color.BLACK);
+        chart.setTransparentCircleAlpha(0);
+        //chart.setCenterText("Super Cool Chart");
+        //chart.setCenterTextSize(10);
+        chart.setDrawEntryLabels(true);
+        chart.setEntryLabelTextSize(20);
+        chart.setUsePercentValues(false);
+
+        List <PieEntry> pieEntries = new ArrayList<PieEntry>();
+        for(int i = 0 ; i<yData.length; i++){
+            pieEntries.add(new PieEntry(yData[i],xData[i]));
         }
 
-        for(int i = 1; i < xData.length; i++){
-            xEntrys.add(xData[i]);
-        }
+        PieDataSet dataSet = new PieDataSet(pieEntries, " ");
+        dataSet.setValueTextSize(20);
+        dataSet.setValueTextColor(WHITE);
+        PieData data = new PieData(dataSet);
 
-        //create the data set
-        PieDataSet pieDataSet = new PieDataSet(yEntrys, "Employee Sales");
-        pieDataSet.setSliceSpace(2);
-        pieDataSet.setValueTextSize(12);
-
-        //add colors to dataset
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.GRAY);
-        colors.add(Color.BLUE);
-        colors.add(Color.RED);
-        colors.add(Color.GREEN);
-        colors.add(Color.CYAN);
-        colors.add(Color.YELLOW);
-        colors.add(Color.MAGENTA);
+        colors.add(ContextCompat.getColor(this, R.color.GreenIncome));
+        colors.add(ContextCompat.getColor(this, R.color.BlueSaving));
+        colors.add(ContextCompat.getColor(this, R.color.RedExpense));
+        colors.add(ContextCompat.getColor(this, R.color.PurpleAutoExpense));
+        dataSet.setColors(colors);
+        dataSet.setSliceSpace(2);
 
-        pieDataSet.setColors(colors);
+        chart.setData(data);
+        chart.invalidate();
 
-        //add legend to chart
-        Legend legend = pieChart.getLegend();
-        legend.setForm(Legend.LegendForm.CIRCLE);
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        legend.setDrawInside(false);
-        //create pie data object
-        PieData pieData = new PieData(pieDataSet);
-        pieChart.setData(pieData);
-        pieChart.invalidate();
     }
+
+
 }
+

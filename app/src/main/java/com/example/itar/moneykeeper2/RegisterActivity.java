@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,5 +36,18 @@ public class RegisterActivity extends AppCompatActivity{
             }
         });
         builder.show();
+    }
+    EditText userName = findViewById(R.id.editText);
+    EditText balance = findViewById(R.id.editText2);
+
+    public String USERNAME = userName.toString();
+    public String BALANCE = balance.toString();
+
+    public String getUSERNAME() {
+        return USERNAME;
+    }
+
+    public String getBALANCE() {
+        return BALANCE;
     }
 }
