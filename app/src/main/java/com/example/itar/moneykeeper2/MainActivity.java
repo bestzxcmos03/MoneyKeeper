@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         datas.add(new Data("Income","Update: Today","1000$"));
         datas.add(new Data("Auto-Income","Update: 8/11/2018","500$"));
         datas.add(new Data("Expense","Update: Today","800$"));
-        datas.add(new Data("Auto-Expense","Update: 25/10/2018","90$"));*/
+        datas.add(new Data("Auto-Expense","Update: 25/10/2018","90$"));6*/
 
 
     }
