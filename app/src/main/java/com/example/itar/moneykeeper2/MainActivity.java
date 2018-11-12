@@ -23,7 +23,9 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static android.graphics.Color.WHITE;
@@ -36,8 +38,11 @@ public class MainActivity extends AppCompatActivity {
     boolean bincome;
     boolean bsaving;
     boolean bexpense;
-    boolean bautoExpense;
-
+    Calendar calendar;
+    SimpleDateFormat simpleDateFormat;
+    String Date;
+    Button create;
+    ListView transactionListView;
 
     /*RegisterActivity reg = new RegisterActivity();
     String name = reg.getUSERNAME();
@@ -45,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
     int intBalance = Integer.parseInt(strBalance);*/
     public SharedPreferences prefs = null;
     private static String TAG = "banana";
-    private float[] yData = {1000,3000,800,500};
-    private String[] xData = {"Income","Saving","Expense","Auto-Expense"};
-    private String[] zData = {"Balance","Income","Saving","Expense","Auto-Expense"};
+    private float[] yData = {1000,3000,800};
+    private String[] xData = {"Income","Saving","Expense"};
+    private String[] zData = {"Balance","Income","Saving","Expense"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,38 +63,67 @@ public class MainActivity extends AppCompatActivity {
         boolean bincome = false;
         boolean bsaving = false;
         boolean bexpense = false;
-        boolean bautoIncome = false;
-
     }
-
     @Override
     protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "Running onPause in MainActivity");
-    }
 
+    }
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "Running onPause in MainActivity");
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "Running onDestroy in MainActivity");
     }
-
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "Running onStop in MainActivity");
     }
-
     @Override
     protected void onResume(){
         super.onResume();
         Log.d(TAG, "Running onResume in MainActivity");
+    }
+    public void create(View v){
+        transactionListView = (ListView)findViewById(R.id.transactionListView);
+        create = (Button)findViewById(R.id.create);
+        calendar = Calendar.getInstance();
+        simpleDateFormat = new SimpleDateFormat("dd-MM-YY");
+        Date = simpleDateFormat.format(calendar.getTime());
+        EditText description = findViewById(R.id.editText3);
+        EditText amount = findViewById(R.id.editText5);
+        String date = simpleDateFormat.format(calendar.getTime());
+        String des = description.getText().toString();
+        int Amount = Integer.parseInt( amount.getText().toString());
+        String transactionType;
+        if(bincome)
+            transactionType = "Income";
+            else if(bsaving)
+                    transactionType = "Saving";
+                else
+                    transactionType = "Expense";
+
+
+        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + "("+dbHelp.COL_DATE+","+dbHelp.COL_DESC+","+dbHelp.COL_AMOUNT+")"+ "VALUES('"+date+"','"+des+"','"+Amount+"')");
+
+
+
+
+        setContentView(R.layout.activity_main);
+        setupPieChart();
+        setupList();
+        Context context = getApplicationContext();
+        text = "Transaction Added";
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
     }
 
     public void checkFirstTime(){
@@ -105,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
             setupList();
         }
     }
-
     public void openRegisterInfo(View v) {
         Log.d(TAG, "Opening RegisterInfo");
         //startActivity(new Intent(this, RegisterActivity.class));
@@ -114,60 +147,40 @@ public class MainActivity extends AppCompatActivity {
 
     CharSequence text;
 
-    public void addIncome(){
+    public void addIncome(View v){
         bincome = true;
-        bautoExpense = false;
         bexpense = false;
         bsaving = false;
         text = "You choose Income.";
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
-    public void addSaving(){
+    public void addSaving(View v){
         bsaving = true;
-        bautoExpense = false;
         bexpense = false;
         bincome = false;
         text = "You choose Saving.";
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
-    public void addExpense(){
+    public void addExpense(View v){
         bexpense = true;
-        bautoExpense = false;
         bincome = false;
         bsaving = false;
         text = "You choose Expense.";
-    }
-    public void addAutoExpense(){
-        bautoExpense = true;
-        bincome = false;
-        bexpense = false;
-        bsaving = false;
-        text = "You choose AutoExpense.";
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 
     public void addNewTransaction(View v){
         Log.d(TAG, "Adding new transaction");
         setContentView(R.layout.new_transaction);
-
-        EditText description = findViewById(R.id.editText3);
-        EditText amount = findViewById(R.id.editText5);
-        EditText day = findViewById(R.id.editText6);
-        EditText month = findViewById(R.id.editText7);
-        EditText year = findViewById(R.id.editText);
-
-
-        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + " (" + dbHelp.COL_DATE + ", " + dbHelp.COL_TYPE
-                + ", " + dbHelp.COL_AMOUNT +") VALUES (25, description.getText().toString(), Integer.parseInt( amount.getText().toString()))");
-
-
-
-
-
-
-
-
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
 
 
     }
@@ -177,36 +190,24 @@ public class MainActivity extends AppCompatActivity {
         startActivity(itn);
     }
 
+    public void goToMain(View v){
+        setContentView(R.layout.activity_main);
+        setupList();
+        setupPieChart();
+    }
     public void dialogAlert(View v) {
         EditText bal = findViewById(R.id.editText2);
         Log.d(TAG, " Dialog Alerting");
+        Date = simpleDateFormat.format(calendar.getTime());
+        String DATE = simpleDateFormat.format(calendar.getTime());
         balance = Integer.parseInt( bal.getText().toString());
-
-        yData[0] = balance;
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Do you want to set pin code?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Log.d(TAG, "Selected Yes");
-                setContentView(R.layout.activity_register2);
-                /*Intent itn = new Intent(getApplicationContext(), PinSetting.class);
-                startActivity(itn);*/
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                Log.d(TAG, "Selected No");
-                /*Intent itn = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(itn);*/
-                setContentView(R.layout.activity_main);
-                setupPieChart();
-                setupList();
-
-            }
-        });
-        builder.show();
+        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + "("+dbHelp.COL_DATE+","+dbHelp.COL_DESC+","+dbHelp.COL_AMOUNT+")"+ "VALUES('"+DATE+"','"+"New User"+"','"+balance+"')");
+        yData[0] = Integer.parseInt(dbHelp.COL_AMOUNT);
+        /*Intent itn = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(itn);*/
+        setContentView(R.layout.activity_main);
+        setupPieChart();
+        setupList();
     }
 
     public void setupList(){
@@ -218,11 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 +" FROM "+ dbHelp.TABLE_NAME,null);
         cur.moveToFirst();
 
-        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + " (" + dbHelp.COL_DATE + ", " + dbHelp.COL_TYPE
-                + ", " + dbHelp.COL_AMOUNT +") VALUES (25, 'MoneyTest', 750)");
-        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + " (" + dbHelp.COL_DATE + ", " + dbHelp.COL_TYPE
-                + ", " + dbHelp.COL_AMOUNT +") VALUES (25, 'MoneyTest', 200)");
-        for(int i = 0 ; i<5; i++){
+        for(int i = 0 ; i<4; i++){
             dirArray.add(zData[i]+" ---->"+cur.getString(cur.getColumnIndex(dbHelp.COL_AMOUNT)));
             cur.moveToNext();
         }
@@ -266,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
         colors.add(ContextCompat.getColor(this, R.color.GreenIncome));
         colors.add(ContextCompat.getColor(this, R.color.BlueSaving));
         colors.add(ContextCompat.getColor(this, R.color.RedExpense));
-        colors.add(ContextCompat.getColor(this, R.color.PurpleAutoExpense));
         dataSet.setColors(colors);
         dataSet.setSliceSpace(2);
 

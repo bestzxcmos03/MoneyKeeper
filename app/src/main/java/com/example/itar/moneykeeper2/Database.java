@@ -11,25 +11,18 @@ class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_DATE = "Date";
     public static final String COL_TYPE = "Type";
     public static final String COL_AMOUNT = "Amount";
+    public static final String COL_DESC = "Description";
     public static final String TOTAL_INCOME = "TotalIncome";
     public static final String TOTAL_SAVING = "TotalSaving";
     public static final String TOTAL_EXPENSE = "TotalType";
-    public static final String TOTAL_AUTOEXPENSE = "TotalAmount";
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME +" (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COL_DATE+ " DATE, " + COL_TYPE + " TEXT, "
-                + COL_AMOUNT + " INTEGER, " + TOTAL_INCOME + " INTEGER, " + TOTAL_SAVING + " INTEGER" +
-                ", " + TOTAL_EXPENSE+ " INTEGER, " + TOTAL_AUTOEXPENSE + " INTEGER);");
+        db.execSQL(" CREATE TABLE " + TABLE_NAME +" (_id INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_DATE + " TEXT , " + COL_DESC + " TEXT , " + COL_AMOUNT + " INTEGER , "+ COL_TYPE + " TEXT , " + TOTAL_INCOME + " INTEGER , " + TOTAL_SAVING + " INTEGER , " + TOTAL_EXPENSE+ " INTEGER );");
 
-
-
-        db.execSQL("INSERT INTO " + TABLE_NAME + " (" + COL_DATE + ", " + COL_TYPE
-                + ", " + COL_AMOUNT +") VALUES (250,'MoneyTest', 1750);");
 
     }
 
