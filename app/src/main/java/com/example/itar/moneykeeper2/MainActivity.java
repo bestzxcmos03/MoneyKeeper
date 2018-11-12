@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
     DatabaseHelper dbHelp;
     Cursor cur;
-    Context context = getApplicationContext();
     boolean bincome;
     boolean bsaving;
     boolean bexpense;
@@ -56,10 +55,10 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("com.example.itar.moneykeeper2", MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         checkFirstTime();
-        boolean bincome=false;
-        boolean bsaving=false;
-        boolean bexpense=false;
-        boolean bautoIncome=false;
+        boolean bincome = false;
+        boolean bsaving = false;
+        boolean bexpense = false;
+        boolean bautoIncome = false;
 
     }
 
@@ -112,7 +111,9 @@ public class MainActivity extends AppCompatActivity {
         //startActivity(new Intent(this, RegisterActivity.class));
         setContentView(R.layout.activity_register);
     }
+
     CharSequence text;
+
     public void addIncome(){
         bincome = true;
         bautoExpense = false;
@@ -163,8 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
+        Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
