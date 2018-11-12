@@ -15,5 +15,7 @@
     <string name="Expense">Expense:</string>
     <string name="auto_income">Auto Income</string>
     <string name="auto_expense">Auto-Expense:</string>
+    <string name="check_transaction">Check Transaction</string>
+    <string name="title_activity_show_all_data">ShowAllData</string>
 
 </resources>

@@ -11,11 +11,11 @@
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/idPieChart"
         android:layout_width="match_parent"
-        android:layout_height="295dp"
+        android:layout_height="372dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="66dp" />
+        android:layout_marginTop="65dp" />
 
     <ImageView
         android:id="@+id/bar"
@@ -41,11 +41,11 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="221dp"
+        android:layout_height="209dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp"
-        android:layout_marginBottom="39dp"
+        android:layout_marginBottom="51dp"
         android:background="#f1781b"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +62,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="0dp"
-        android:background="#eeeeee"
+        android:background="#bbbbbb"
         android:onClick="checkTransaction"
         android:text="@string/Expense"
         android:textColor="#4d4d4d"
@@ -81,24 +81,8 @@
         android:layout_marginBottom="2dp"
         android:background="@mipmap/add" />
 
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="335dp"
-        android:layout_marginBottom="239dp"
-        android:background="@mipmap/color4d4d4d" />
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="545dp"
-        android:layout_marginBottom="239dp"
-        android:background="@mipmap/color4d4d4d" />
+
+
     <ImageView
         android:id="@+id/imageView7"
         android:layout_width="match_parent"
@@ -116,10 +100,10 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="555dp"
+        android:layout_marginTop="615dp"
         android:layout_marginEnd="76dp"
         android:layout_marginBottom="0dp"
-        android:text="Check Transaction"
+        android:text="@string/check_transaction"
         android:textColor="#4d4d4d"
         android:textSize="30sp" />
 

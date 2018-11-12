@@ -22,7 +22,7 @@ public class MyAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView tvTitle;
         TextView tvDesc;
-        ImageView img;
+        TextView tvBal;
     }
 
     @Override
@@ -48,6 +48,7 @@ public class MyAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tvTitle = view.findViewById(R.id.txtTitle);
             holder.tvDesc = view.findViewById(R.id.txtDescription);
+            holder.tvBal = view.findViewById(R.id.balanceView);
             view.setTag(holder);
         }else{
             holder = (ViewHolder)view.getTag();
@@ -56,6 +57,7 @@ public class MyAdapter extends BaseAdapter {
         String title = mDatas.get(position).getmText1();
         holder.tvTitle.setText(title);
         holder.tvDesc.setText(mDatas.get(position).getmText2());
+        holder.tvBal.setText(mDatas.get(position).getmText3());
         return view;
     }
 }

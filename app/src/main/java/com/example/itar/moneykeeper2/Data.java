@@ -4,11 +4,13 @@ package com.example.itar.moneykeeper2;
 public class Data{
     private String mText1;
     private String mText2;
+    private String mText3;
     private int mIcon;
 
-    public Data(String mText1, String mText2){
+    public Data(String mText1, String mText2, String mText3){
         this.mText1 = mText1;
         this.mText2 = mText2;
+        this.mText3 = mText3;
     }
 
     public String getmText1(){
@@ -27,11 +29,12 @@ public class Data{
         this.mText2 = mText2;
     }
 
-    public int getmIcon(){
-        return mIcon;
+    public String getmText3(){
+        return mText3;
     }
 
-    public void setmIcon(int mIcon){
-        this.mIcon = mIcon;
+    public void setmText3(String mText3){
+        this.mText3 = mText3;
     }
+
 }
