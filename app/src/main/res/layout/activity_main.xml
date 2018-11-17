@@ -107,5 +107,14 @@
         android:textColor="#4d4d4d"
         android:textSize="30sp" />
 
+    <ImageView
+        android:id="@+id/imageButton4"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:background="@mipmap/quote"
+        android:onClick="credits" />
+
 </RelativeLayout>
 

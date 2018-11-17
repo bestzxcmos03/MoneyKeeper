@@ -1,11 +1,14 @@
 package com.example.itar.moneykeeper2;
 
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -31,38 +35,46 @@ import java.util.List;
 import static android.graphics.Color.WHITE;
 
 public class MainActivity extends AppCompatActivity {
-    float balance;
+    ContentValues val = new ContentValues();
+    int ttSaving;
+    int ttIncome;
+    int ttExpense;
+    int ttBalance;
+    int balance;
+    boolean doOneTime=true;
     SQLiteDatabase db;
     DatabaseHelper dbHelp;
     Cursor cur;
+    CharSequence text;
+    String StrnName;
     boolean bincome;
     boolean bsaving;
     boolean bexpense;
+    boolean isPressed;
     Calendar calendar;
     SimpleDateFormat simpleDateFormat;
     String Date;
     Button create;
     ListView transactionListView;
-
-    /*RegisterActivity reg = new RegisterActivity();
-    String name = reg.getUSERNAME();
-    String strBalance = reg.getBALANCE();
-    int intBalance = Integer.parseInt(strBalance);*/
+    EditText nickName;
+    TextView Title;
     public SharedPreferences prefs = null;
     private static String TAG = "banana";
-    private float[] yData = {1000,3000,800};
+    private int[] yData=new int[4];
     private String[] xData = {"Income","Saving","Expense"};
     private String[] zData = {"Balance","Income","Saving","Expense"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Running onCreate in MainActivity");
+        dbHelp = new DatabaseHelper(this);
+        db = dbHelp.getWritableDatabase();
         prefs = getSharedPreferences("com.example.itar.moneykeeper2", MODE_PRIVATE);
         setContentView(R.layout.activity_main);
+        isPressed = false;
         checkFirstTime();
-        boolean bincome = false;
-        boolean bsaving = false;
-        boolean bexpense = false;
+
+        //yData[0]=dbHelp.getIncome();
     }
     @Override
     protected void onRestart() {
@@ -89,35 +101,59 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Log.d(TAG, "Running onResume in MainActivity");
+
     }
     public void create(View v){
         transactionListView = (ListView)findViewById(R.id.transactionListView);
         create = (Button)findViewById(R.id.create);
         calendar = Calendar.getInstance();
-        simpleDateFormat = new SimpleDateFormat("dd-MM-YY");
+        simpleDateFormat = new SimpleDateFormat("dd-MM-YYYY");
         Date = simpleDateFormat.format(calendar.getTime());
         EditText description = findViewById(R.id.editText3);
         EditText amount = findViewById(R.id.editText5);
         String date = simpleDateFormat.format(calendar.getTime());
         String des = description.getText().toString();
+        yData[0]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_BALANCE)));
+        yData[1]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_INCOME)));
+        yData[2]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_SAVING)));
+        yData[3]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_EXPENSE)));
+        if(doOneTime){
+            ttBalance += yData[0];
+            ttIncome += yData[1];
+            ttSaving += yData[2];
+            ttExpense += yData[3];
+            doOneTime = false;
+        }
         int Amount = Integer.parseInt( amount.getText().toString());
         String transactionType;
-        if(bincome)
+        if(bincome){
             transactionType = "Income";
-            else if(bsaving)
-                    transactionType = "Saving";
-                else
-                    transactionType = "Expense";
+            ttIncome+=Amount;
+            isPressed = true;
+        } else
+            if(bsaving){
+                transactionType = "Saving";
+                ttSaving+=Amount;
+                isPressed = true;
+        } else{
+                transactionType = "Expense";
+                ttExpense+=Amount;
+                isPressed = true;
+        }
 
+        ttBalance = ttIncome-ttExpense;
+        if(!isPressed){
+            create(v);
+        }
 
-        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + "("+dbHelp.COL_DATE+","+dbHelp.COL_DESC+","+dbHelp.COL_AMOUNT+")"+ "VALUES('"+date+"','"+des+"','"+Amount+"')");
-
+        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + "("+dbHelp.COL_DATE+","+dbHelp.COL_DESC+","+dbHelp.COL_AMOUNT+","+dbHelp.COL_TYPE+","+dbHelp.TOTAL_SAVING+","+dbHelp.TOTAL_INCOME+","+dbHelp.TOTAL_EXPENSE+","+dbHelp.TOTAL_BALANCE+")"
+                + "VALUES('"+date+"','"+des+"','"+Amount+"','"+transactionType+"','"+ttSaving+"','"+ttIncome+"','"+ttExpense+"','"+ttBalance+"')");
 
 
 
         setContentView(R.layout.activity_main);
-        setupPieChart();
         setupList();
+        setupPieChart();
         Context context = getApplicationContext();
         text = "Transaction Added";
         int duration = Toast.LENGTH_SHORT;
@@ -130,13 +166,21 @@ public class MainActivity extends AppCompatActivity {
         if (prefs.getBoolean("firstrun", true)) {
             Log.d(TAG, "FirstRun");
             setContentView(R.layout.activity_firsttime);
+            ttSaving=0;
+            ttIncome=0;
+            ttExpense=0;
+            ttBalance=0;
+            balance=0;
+            bincome = false;
+            bsaving = false;
+            bexpense = false;
             prefs.edit().putBoolean("firstrun", false).apply();
         }
         else{
-            Log.d(TAG, "Not FirstRun /nStarting main class ");
+            Log.d(TAG, "Not FirstRun \nStarting main class ");
             setContentView(R.layout.activity_main);
-            setupPieChart();
             setupList();
+            setupPieChart();
         }
     }
     public void openRegisterInfo(View v) {
@@ -145,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
     }
 
-    CharSequence text;
+
 
     public void addIncome(View v){
         bincome = true;
@@ -177,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
-
     public void addNewTransaction(View v){
         Log.d(TAG, "Adding new transaction");
         setContentView(R.layout.new_transaction);
@@ -186,51 +229,83 @@ public class MainActivity extends AppCompatActivity {
     }
     public void checkTransaction(View v){
         Log.d(TAG, "start to check transaction");
-        Intent itn = new Intent(this, CheckTransaction.class);
-        startActivity(itn);
-    }
+        setContentView(R.layout.check_transaction);
+        ListView lv = findViewById(R.id.transactionListView);
+        ArrayList<String> dirArray = new ArrayList<>();
 
+        cur = db.rawQuery("SELECT * FROM "+ DatabaseHelper.TABLE_NAME,null);
+        cur.moveToFirst();
+        cur.moveToNext();
+        String date;
+        String amount;
+        String type;
+        String desc;
+        while (!cur.isAfterLast()){
+            date =cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE));
+            amount =cur.getString(cur.getColumnIndex(DatabaseHelper.COL_AMOUNT));
+            type =cur.getString(cur.getColumnIndex(DatabaseHelper.COL_TYPE));
+            desc =cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DESC));
+            dirArray.add(desc + " -> "+type+"\nDate: "+date+"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"+amount+".- BAHT");
+            cur.moveToNext();
+        }
+
+
+        ArrayAdapter<String> adapterDir = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dirArray);
+        lv.setAdapter(adapterDir);
+
+        /*while (c.isAfterLast()) {
+            arr.add("Date " + c.getString(c.getColumnIndex(DatabaseHelper.COL_DATE)) + "\t\t\t\t\t\t\t" + c.getString(c.getColumnIndex(DatabaseHelper.COL_AMOUNT)));
+
+        }*/
+
+    }
     public void goToMain(View v){
         setContentView(R.layout.activity_main);
         setupList();
         setupPieChart();
     }
-    public void dialogAlert(View v) {
+    @SuppressLint("SimpleDateFormat")
+    public void AfterPressRegisterButton(View v) {
         EditText bal = findViewById(R.id.editText2);
-        Log.d(TAG, " Dialog Alerting");
-        Date = simpleDateFormat.format(calendar.getTime());
-        String DATE = simpleDateFormat.format(calendar.getTime());
+        nickName = findViewById(R.id.nickName);
+        StrnName =nickName.getText().toString();
+        db.execSQL(" INSERT INTO " + DatabaseHelper.TABLE_NAME + "("+ DatabaseHelper.NAME +")" + " VALUES ('"+StrnName+"')");
+
         balance = Integer.parseInt( bal.getText().toString());
-        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + "("+dbHelp.COL_DATE+","+dbHelp.COL_DESC+","+dbHelp.COL_AMOUNT+")"+ "VALUES('"+DATE+"','"+"New User"+"','"+balance+"')");
-        yData[0] = Integer.parseInt(dbHelp.COL_AMOUNT);
+        Log.d(TAG, " Seting up first input to database");
+        dbHelp.setDB( "\t\t\t\t\t\t\t\t\t\t\t"," ", balance, "First input Money", balance,0,0,balance);
+        Log.i("Executed first SQL", TAG);
+        yData[0] = balance;
         /*Intent itn = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(itn);*/
         setContentView(R.layout.activity_main);
-        setupPieChart();
         setupList();
+        setupPieChart();
+
     }
 
+    @SuppressLint("SetTextI18n")
     public void setupList(){
+        Title = findViewById(R.id.Title);
+        Cursor c = db.rawQuery("SELECT NAME FROM "+ DatabaseHelper.TABLE_NAME,null);
+        c.moveToFirst();
+        Title.setText("Hello, "+c.getString(c.getColumnIndex(DatabaseHelper.NAME)));
+
         ListView lv = findViewById(R.id.listView);
         ArrayList<String> dirArray = new ArrayList<>();
-        dbHelp = new DatabaseHelper(this);
-        db = dbHelp.getWritableDatabase();
-        cur = db.rawQuery(" SELECT "+ dbHelp.COL_TYPE +", " +dbHelp.COL_DATE+","+dbHelp.COL_AMOUNT
-                +" FROM "+ dbHelp.TABLE_NAME,null);
-        cur.moveToFirst();
 
-        for(int i = 0 ; i<4; i++){
-            dirArray.add(zData[i]+" ---->"+cur.getString(cur.getColumnIndex(dbHelp.COL_AMOUNT)));
-            cur.moveToNext();
-        }
+        cur = db.rawQuery("SELECT * FROM "+ DatabaseHelper.TABLE_NAME,null);
+        cur.moveToLast();
+        yData[0]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_BALANCE)));
+        yData[1]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_INCOME)));
+        yData[2]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_SAVING)));
+        yData[3]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_EXPENSE)));
+        dirArray.add(zData[0]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_BALANCE))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
+        dirArray.add(zData[1]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_INCOME))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
+        dirArray.add(zData[2]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_SAVING))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
+        dirArray.add(zData[3]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_EXPENSE))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
         ArrayAdapter<String> adapterDir = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dirArray);
         lv.setAdapter(adapterDir);
-        /*datas.add(new Data("Balance","Update: Today","2000$"));
-        datas.add(new Data("Saving","Update: 10/11/2018","3000$"));
-        datas.add(new Data("Income","Update: Today","1000$"));
-        datas.add(new Data("Auto-Income","Update: 8/11/2018","500$"));
-        datas.add(new Data("Expense","Update: Today","800$"));
-        datas.add(new Data("Auto-Expense","Update: 25/10/2018","90$"));6*/
 
 
     }
@@ -238,43 +313,51 @@ public class MainActivity extends AppCompatActivity {
     public void setupPieChart(){
 
         PieChart chart = findViewById(R.id.idPieChart);
-
+        Log.d(TAG, "Creating chart");
         chart.setRotationEnabled(true);
-        chart.setHoleRadius(0f);
-        //chart.setCenterTextColor(Color.BLACK);
-        chart.setTransparentCircleAlpha(0);
-        //chart.setCenterText("Super Cool Chart");
-        //chart.setCenterTextSize(10);
+        chart.setHoleRadius(50f);
+        chart.setHoleColor(Color.parseColor("#ffad6a"));
+        chart.setCenterTextColor(Color.parseColor("#4d4d4d"));
+        chart.setTransparentCircleAlpha(100);
+        chart.setCenterText("Summary of Usage");
+        chart.setCenterTextSize(18);
         chart.setDrawEntryLabels(true);
         chart.setEntryLabelTextSize(20);
         chart.setUsePercentValues(false);
+        Log.d(TAG, "Income = "+yData[1]);
+        Log.d(TAG, "Saving = "+yData[2]);
+        Log.d(TAG, "Expense = "+yData[3]);
 
+
+
+        ArrayList<Integer> colors = new ArrayList<>();
         List <PieEntry> pieEntries = new ArrayList<PieEntry>();
-        for(int i = 0 ; i<yData.length; i++){
-            if(yData[i]>0)
-                pieEntries.add(new PieEntry(yData[i],xData[i]));
+        if(yData[1]>0){
+            pieEntries.add(new PieEntry(yData[1],xData[0]));
+            colors.add(ContextCompat.getColor(this, R.color.GreenIncome));}
+        if(yData[2]>0){
+            pieEntries.add(new PieEntry(yData[2],xData[1]));
+            colors.add(ContextCompat.getColor(this, R.color.BlueSaving));
         }
+        if(yData[3]>0){
+            pieEntries.add(new PieEntry(yData[3],xData[2]));
+            colors.add(ContextCompat.getColor(this, R.color.RedExpense));
+        }
+
         PieDataSet dataSet = new PieDataSet(pieEntries, " ");
         dataSet.setValueTextSize(20);
         dataSet.setValueTextColor(WHITE);
         PieData data = new PieData(dataSet);
 
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(ContextCompat.getColor(this, R.color.GreenIncome));
-        colors.add(ContextCompat.getColor(this, R.color.BlueSaving));
-        colors.add(ContextCompat.getColor(this, R.color.RedExpense));
+
         dataSet.setColors(colors);
         dataSet.setSliceSpace(2);
 
         chart.setData(data);
         chart.invalidate();
     }
-}
 
-/*while ( !cur.isAfterLast() ){
-        dirArray.add(cur.getString(cur.getColumnIndex(dbHelp.COL_TYPE)) + "\n"
-        + xData[0] + cur.getString(cur.getColumnIndex(dbHelp.COL_DATE)) + "\t\t"
-        + "Cake : " + cur.getString(cur.getColumnIndex(dbHelp.COL_AMOUNT)));
-        cur.moveToNext();
-        i++;
-        }*/
+    public void credits(View v){
+        setContentView(R.layout.credit_activity);
+    }
+}
