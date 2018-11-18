@@ -5,12 +5,10 @@
     android:layout_height="match_parent"
     android:background="#ffad6a"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
     <LinearLayout
         android:id="@+id/shapeLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,7 +17,6 @@
             android:text="@string/hello"
             android:textColor="#4d4d4d"
             android:textSize="50sp" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +25,6 @@
             android:text="@string/your_first_use_right"
             android:textColor="#4d4d4d"
             android:textSize="50sp" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +33,6 @@
             android:text="@string/welcome_to_moneykeeper"
             android:textColor="#4d4d4d"
             android:textSize="50sp" />
-
         <TextView
             android:id="@+id/next"
             android:layout_width="wrap_content"
@@ -48,7 +43,5 @@
             android:onClick="openRegisterInfo"
             android:textColor="#4d4d4d"
             android:textSize="30sp" />
-
-
     </LinearLayout>
 </HorizontalScrollView>

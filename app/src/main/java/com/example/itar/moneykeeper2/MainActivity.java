@@ -140,20 +140,16 @@ public class MainActivity extends AppCompatActivity {
                 ttExpense+=Amount;
                 isPressed = true;
         }
-
         ttBalance = ttIncome-ttExpense;
         if(!isPressed){
             create(v);
         }
-
         db.execSQL("INSERT INTO " + DatabaseHelper.TABLE_NAME + "("+ DatabaseHelper.COL_DATE +"," +
                 ""+ DatabaseHelper.COL_DESC +","+ DatabaseHelper.COL_AMOUNT +","+dbHelp.COL_TYPE+"," +
                 ""+ DatabaseHelper.TOTAL_SAVING +","+ DatabaseHelper.TOTAL_INCOME +"," +
                 ""+ DatabaseHelper.TOTAL_EXPENSE +","+ DatabaseHelper.TOTAL_BALANCE +")"
                 + "VALUES('"+date+"','"+des+"','"+Amount+"','"+transactionType+"'," +
                 "'"+ttSaving+"','"+ttIncome+"','"+ttExpense+"','"+ttBalance+"')");
-
-
         setContentView(R.layout.activity_main);
         setupList();
         setupPieChart();
@@ -263,11 +259,13 @@ public class MainActivity extends AppCompatActivity {
         prefs.edit().putBoolean("firstrun", false).apply();
         nickName = findViewById(R.id.nickName);
         StrnName =nickName.getText().toString();
-        db.execSQL(" INSERT INTO " + DatabaseHelper.TABLE_NAME + "("+ DatabaseHelper.NAME +")" + " VALUES ('"+StrnName+"')");
+        db.execSQL(" INSERT INTO " + DatabaseHelper.TABLE_NAME +
+                "("+ DatabaseHelper.NAME +")" + " VALUES ('"+StrnName+"')");
 
         balance = Integer.parseInt( bal.getText().toString());
         Log.d(TAG, " Seting up first input to database");
-        dbHelp.setDB( "\t\t\t\t\t\t\t\t\t\t\t"," ", balance, "First input Money", balance,0,0,balance);
+        dbHelp.setDB( "\t\t\t\t\t\t\t\t\t\t\t"," ", balance,
+                "First input Money", balance,0,0,balance);
         Log.i("Executed first SQL", TAG);
         yData[0] = balance;
         setContentView(R.layout.activity_main);
@@ -292,17 +290,20 @@ public class MainActivity extends AppCompatActivity {
         yData[1]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_INCOME)));
         yData[2]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_SAVING)));
         yData[3]=Integer.parseInt(cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_EXPENSE)));
-        dirArray.add(zData[0]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_BALANCE))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
-        dirArray.add(zData[1]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_INCOME))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
-        dirArray.add(zData[2]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_SAVING))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
-        dirArray.add(zData[3]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_EXPENSE))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
+        dirArray.add(zData[0]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_BALANCE))+
+                " BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
+        dirArray.add(zData[1]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_INCOME))+
+                " BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
+        dirArray.add(zData[2]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_SAVING))+
+                " BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
+        dirArray.add(zData[3]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_EXPENSE))+
+                " BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
         ArrayAdapter<String> adapterDir = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dirArray);
         lv.setAdapter(adapterDir);
 
     }
 
     public void setupPieChart(){
-
         PieChart chart = findViewById(R.id.idPieChart);
         Log.d(TAG, "Creating chart");
         chart.setRotationEnabled(true);
@@ -318,9 +319,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Income = "+yData[1]);
         Log.d(TAG, "Saving = "+yData[2]);
         Log.d(TAG, "Expense = "+yData[3]);
-
-
-
         ArrayList<Integer> colors = new ArrayList<>();
         List <PieEntry> pieEntries = new ArrayList<PieEntry>();
         if(yData[1]>0){
@@ -334,16 +332,12 @@ public class MainActivity extends AppCompatActivity {
             pieEntries.add(new PieEntry(yData[3],xData[2]));
             colors.add(ContextCompat.getColor(this, R.color.RedExpense));
         }
-
         PieDataSet dataSet = new PieDataSet(pieEntries, " ");
         dataSet.setValueTextSize(20);
         dataSet.setValueTextColor(WHITE);
         PieData data = new PieData(dataSet);
-
-
         dataSet.setColors(colors);
         dataSet.setSliceSpace(2);
-
         chart.setData(data);
         chart.invalidate();
     }
