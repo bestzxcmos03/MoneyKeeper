@@ -42,15 +42,20 @@ public class MainActivity extends AppCompatActivity {
     int ttBalance;
     int balance;
     boolean doOneTime=true;
+    boolean bincome;
+    boolean bsaving;
+    boolean bexpense;
+    boolean isPressed;
+    public SharedPreferences prefs = null;
+    private static String TAG = "banana";
+    private int[] yData=new int[4];
+    private String[] xData = {"Income","Saving","Expense"};
+    private String[] zData = {"Balance","Income","Saving","Expense"};
     SQLiteDatabase db;
     DatabaseHelper dbHelp;
     Cursor cur;
     CharSequence text;
     String StrnName;
-    boolean bincome;
-    boolean bsaving;
-    boolean bexpense;
-    boolean isPressed;
     Calendar calendar;
     SimpleDateFormat simpleDateFormat;
     String Date;
@@ -58,11 +63,6 @@ public class MainActivity extends AppCompatActivity {
     ListView transactionListView;
     EditText nickName;
     TextView Title;
-    public SharedPreferences prefs = null;
-    private static String TAG = "banana";
-    private int[] yData=new int[4];
-    private String[] xData = {"Income","Saving","Expense"};
-    private String[] zData = {"Balance","Income","Saving","Expense"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,9 +146,12 @@ public class MainActivity extends AppCompatActivity {
             create(v);
         }
 
-        db.execSQL("INSERT INTO " + dbHelp.TABLE_NAME + "("+dbHelp.COL_DATE+","+dbHelp.COL_DESC+","+dbHelp.COL_AMOUNT+","+dbHelp.COL_TYPE+","+dbHelp.TOTAL_SAVING+","+dbHelp.TOTAL_INCOME+","+dbHelp.TOTAL_EXPENSE+","+dbHelp.TOTAL_BALANCE+")"
-                + "VALUES('"+date+"','"+des+"','"+Amount+"','"+transactionType+"','"+ttSaving+"','"+ttIncome+"','"+ttExpense+"','"+ttBalance+"')");
-
+        db.execSQL("INSERT INTO " + DatabaseHelper.TABLE_NAME + "("+ DatabaseHelper.COL_DATE +"," +
+                ""+ DatabaseHelper.COL_DESC +","+ DatabaseHelper.COL_AMOUNT +","+dbHelp.COL_TYPE+"," +
+                ""+ DatabaseHelper.TOTAL_SAVING +","+ DatabaseHelper.TOTAL_INCOME +"," +
+                ""+ DatabaseHelper.TOTAL_EXPENSE +","+ DatabaseHelper.TOTAL_BALANCE +")"
+                + "VALUES('"+date+"','"+des+"','"+Amount+"','"+transactionType+"'," +
+                "'"+ttSaving+"','"+ttIncome+"','"+ttExpense+"','"+ttBalance+"')");
 
 
         setContentView(R.layout.activity_main);
@@ -159,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
-
     }
 
     public void checkFirstTime(){
@@ -174,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
             bincome = false;
             bsaving = false;
             bexpense = false;
-            prefs.edit().putBoolean("firstrun", false).apply();
         }
         else{
             Log.d(TAG, "Not FirstRun \nStarting main class ");
@@ -188,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
         //startActivity(new Intent(this, RegisterActivity.class));
         setContentView(R.layout.activity_register);
     }
-
-
 
     public void addIncome(View v){
         bincome = true;
@@ -249,14 +248,8 @@ public class MainActivity extends AppCompatActivity {
             cur.moveToNext();
         }
 
-
         ArrayAdapter<String> adapterDir = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dirArray);
         lv.setAdapter(adapterDir);
-
-        /*while (c.isAfterLast()) {
-            arr.add("Date " + c.getString(c.getColumnIndex(DatabaseHelper.COL_DATE)) + "\t\t\t\t\t\t\t" + c.getString(c.getColumnIndex(DatabaseHelper.COL_AMOUNT)));
-
-        }*/
 
     }
     public void goToMain(View v){
@@ -267,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("SimpleDateFormat")
     public void AfterPressRegisterButton(View v) {
         EditText bal = findViewById(R.id.editText2);
+        prefs.edit().putBoolean("firstrun", false).apply();
         nickName = findViewById(R.id.nickName);
         StrnName =nickName.getText().toString();
         db.execSQL(" INSERT INTO " + DatabaseHelper.TABLE_NAME + "("+ DatabaseHelper.NAME +")" + " VALUES ('"+StrnName+"')");
@@ -276,8 +270,6 @@ public class MainActivity extends AppCompatActivity {
         dbHelp.setDB( "\t\t\t\t\t\t\t\t\t\t\t"," ", balance, "First input Money", balance,0,0,balance);
         Log.i("Executed first SQL", TAG);
         yData[0] = balance;
-        /*Intent itn = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(itn);*/
         setContentView(R.layout.activity_main);
         setupList();
         setupPieChart();
@@ -306,7 +298,6 @@ public class MainActivity extends AppCompatActivity {
         dirArray.add(zData[3]+" ----> "+cur.getString(cur.getColumnIndex(DatabaseHelper.TOTAL_EXPENSE))+" BAHT\nModified: "+cur.getString(cur.getColumnIndex(DatabaseHelper.COL_DATE)));
         ArrayAdapter<String> adapterDir = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dirArray);
         lv.setAdapter(adapterDir);
-
 
     }
 
